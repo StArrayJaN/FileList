@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "starray.android.filelist-release-9:/layout-v21/notification_template_custom_big.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/layout-v21/notification_template_custom_big.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/layout-v21/notification_action_tombstone.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/layout-v21/notification_action_tombstone.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/layout-v21/notification_template_icon_group.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/layout-v21/notification_template_icon_group.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/layout-v21/notification_action.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/layout-v21/notification_action.xml"
+    }
+]

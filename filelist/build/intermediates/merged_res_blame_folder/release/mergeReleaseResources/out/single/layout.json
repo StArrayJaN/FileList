@@ -1,0 +1,18 @@
+[
+    {
+        "merged": "starray.android.filelist-release-9:/layout/custom_dialog.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/layout/custom_dialog.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/layout/file_list_item.xml",
+        "source": "starray.android.filelist-main-10:/layout/file_list_item.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/layout/notification_template_part_chronometer.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/layout/notification_template_part_chronometer.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/layout/notification_template_part_time.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/layout/notification_template_part_time.xml"
+    }
+]

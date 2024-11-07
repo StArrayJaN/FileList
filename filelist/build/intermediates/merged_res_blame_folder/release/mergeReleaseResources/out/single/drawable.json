@@ -1,0 +1,74 @@
+[
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_h.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_h.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/notification_bg_low.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable/notification_bg_low.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/notification_icon_background.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable/notification_icon_background.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_new.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_new.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_txt.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_txt.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_xml.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_xml.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_paren.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_paren.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/folder.png",
+        "source": "starray.android.filelist-main-10:/drawable/folder.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_js.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_js.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_html.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_html.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/folder_open.png",
+        "source": "starray.android.filelist-main-10:/drawable/folder_open.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_c.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_c.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_cpp.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_cpp.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/notification_tile_bg.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable/notification_tile_bg.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_java.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_java.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/file_type_unknown.png",
+        "source": "starray.android.filelist-main-10:/drawable/file_type_unknown.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/folder_hidden.png",
+        "source": "starray.android.filelist-main-10:/drawable/folder_hidden.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable/notification_bg.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable/notification_bg.xml"
+    }
+]

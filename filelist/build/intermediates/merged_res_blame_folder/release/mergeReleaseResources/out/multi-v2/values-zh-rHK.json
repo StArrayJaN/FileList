@@ -1,0 +1,34 @@
+{
+    "logs": [
+        {
+            "outputFile": "starray.android.filelist-release-9:/values-zh-rHK/values-zh-rHK.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\d16c7e1c21298283c20212ba2771eefb\\transformed\\core-1.7.0\\res\\values-zh-rHK\\values-zh-rHK.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    }
+                }
+            ]
+        },
+        {
+            "outputFile": "starray.android.filelist-mergeReleaseResources-7:/values-zh-rHK/values-zh-rHK.xml",
+            "map": [
+                {
+                    "source": "C:\\Users\\DELL\\.gradle\\caches\\8.10.2\\transforms\\d16c7e1c21298283c20212ba2771eefb\\transformed\\core-1.7.0\\res\\values-zh-rHK\\values-zh-rHK.xml",
+                    "from": {
+                        "startLines": "2",
+                        "startColumns": "4",
+                        "startOffsets": "55",
+                        "endColumns": "100",
+                        "endOffsets": "151"
+                    }
+                }
+            ]
+        }
+    ]
+}

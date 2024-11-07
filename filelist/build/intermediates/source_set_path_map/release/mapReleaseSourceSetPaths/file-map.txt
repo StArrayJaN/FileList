@@ -1,0 +1,13 @@
+starray.android.filelist-lifecycle-runtime-2.3.1-0 C:\Users\DELL\.gradle\caches\8.10.2\transforms\3772bdf7089adb2049a9c4cf85f7468c\transformed\lifecycle-runtime-2.3.1\res
+starray.android.filelist-customview-poolingcontainer-1.0.0-1 C:\Users\DELL\.gradle\caches\8.10.2\transforms\56e1c77fa94217537abd2e19fc4a0be9\transformed\customview-poolingcontainer-1.0.0\res
+starray.android.filelist-core-ktx-1.5.0-2 C:\Users\DELL\.gradle\caches\8.10.2\transforms\beafd40433ded028448cad510e11af56\transformed\core-ktx-1.5.0\res
+starray.android.filelist-core-1.7.0-3 C:\Users\DELL\.gradle\caches\8.10.2\transforms\d16c7e1c21298283c20212ba2771eefb\transformed\core-1.7.0\res
+starray.android.filelist-annotation-experimental-1.1.0-4 C:\Users\DELL\.gradle\caches\8.10.2\transforms\d243699217ec2bfb76283af81fd7a71e\transformed\annotation-experimental-1.1.0\res
+starray.android.filelist-recyclerview-1.3.2-5 C:\Users\DELL\.gradle\caches\8.10.2\transforms\d7103787bf8a54456964916b1e742c8b\transformed\recyclerview-1.3.2\res
+starray.android.filelist-pngs-6 C:\Users\DELL\Desktop\Projects\FIleList\filelist\build\generated\res\pngs\release
+starray.android.filelist-resValues-7 C:\Users\DELL\Desktop\Projects\FIleList\filelist\build\generated\res\resValues\release
+starray.android.filelist-mergeReleaseResources-8 C:\Users\DELL\Desktop\Projects\FIleList\filelist\build\intermediates\incremental\release\mergeReleaseResources\merged.dir
+starray.android.filelist-mergeReleaseResources-9 C:\Users\DELL\Desktop\Projects\FIleList\filelist\build\intermediates\incremental\release\mergeReleaseResources\stripped.dir
+starray.android.filelist-release-10 C:\Users\DELL\Desktop\Projects\FIleList\filelist\build\intermediates\merged_res\release\mergeReleaseResources
+starray.android.filelist-main-11 C:\Users\DELL\Desktop\Projects\FIleList\filelist\src\main\res
+starray.android.filelist-release-12 C:\Users\DELL\Desktop\Projects\FIleList\filelist\src\release\res

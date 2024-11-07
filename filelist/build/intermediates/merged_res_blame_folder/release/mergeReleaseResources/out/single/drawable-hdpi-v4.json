@@ -1,0 +1,22 @@
+[
+    {
+        "merged": "starray.android.filelist-release-9:/drawable-hdpi-v4/notify_panel_notification_icon_bg.png",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable-hdpi-v4/notify_panel_notification_icon_bg.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable-hdpi-v4/notification_bg_normal.9.png",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable-hdpi-v4/notification_bg_normal.9.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable-hdpi-v4/notification_bg_low_pressed.9.png",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable-hdpi-v4/notification_bg_low_pressed.9.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable-hdpi-v4/notification_bg_normal_pressed.9.png",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable-hdpi-v4/notification_bg_normal_pressed.9.png"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/drawable-hdpi-v4/notification_bg_low_normal.9.png",
+        "source": "starray.android.filelist-core-1.7.0-3:/drawable-hdpi-v4/notification_bg_low_normal.9.png"
+    }
+]

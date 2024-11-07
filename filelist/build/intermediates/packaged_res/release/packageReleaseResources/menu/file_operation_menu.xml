@@ -1,0 +1,35 @@
+<?xml version="1.0" encoding="utf-8"?>
+<menu xmlns:android="http://schemas.android.com/apk/res/android">
+    <item
+        android:id="@+id/copy"
+        android:title="复制"
+        />
+    <item
+        android:id="@+id/move"
+        android:title="移动"
+        />
+    <item
+        android:id="@+id/delete"
+        android:title="删除"
+        />
+    <item
+        android:id="@+id/rename"
+        android:title="重命名"
+        />
+    <item
+        android:id="@+id/paste"
+        android:title="粘贴"
+        />
+    <group
+        android:id="@+id/create"
+        android:title="创建">
+        <item
+            android:id="@+id/create_folder"
+            android:title="文件夹"
+            />
+        <item
+            android:id="@+id/create_file"
+            android:title="文件"
+            />
+    </group>
+</menu>

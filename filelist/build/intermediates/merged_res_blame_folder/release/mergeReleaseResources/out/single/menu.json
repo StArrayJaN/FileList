@@ -1,0 +1,14 @@
+[
+    {
+        "merged": "starray.android.filelist-release-9:/menu/example_menu2.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/menu/example_menu2.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/menu/file_operation_menu.xml",
+        "source": "starray.android.filelist-main-10:/menu/file_operation_menu.xml"
+    },
+    {
+        "merged": "starray.android.filelist-release-9:/menu/example_menu.xml",
+        "source": "starray.android.filelist-core-1.7.0-3:/menu/example_menu.xml"
+    }
+]
