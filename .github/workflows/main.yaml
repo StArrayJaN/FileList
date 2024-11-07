@@ -29,8 +29,8 @@ jobs:
           name: sample-app
           path: app/build/outputs/apk/debug/app-debug.apk
 
-      - name: Upload sample app
+      - name: Upload filelist aar
         uses: actions/upload-artifact@v3
         with:
-          - name: filelist aar
-          - path: filelist/build/outputs/aar/filelist-release.aar
+          name: filelist-aar
+          path: filelist/build/outputs/aar/filelist-release.aar
