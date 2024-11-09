@@ -59,7 +59,7 @@ public class MainActivity extends AppCompatActivity {
 ```java
 fileListView.getAdapter().setOnItemClickListener(() -> {
     @Override
-    public void onItemClick(FileListView view, int position) {
+    public void onFileItemClick(File file) {
         // do something
     }
 });
