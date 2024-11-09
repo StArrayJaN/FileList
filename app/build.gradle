@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'starray.android.filelistdemo'
-    compileSdk 34
+    compileSdk 35
 
     defaultConfig {
         applicationId "starray.android.filelist"

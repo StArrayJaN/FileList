@@ -45,7 +45,7 @@ artifacts {
 
 group = "io.github.starrayjan"
 archivesBaseName = "filelist"
-boolean enableMavenCentral = true
+boolean enableMavenCentral = false
 publishing {
     publications {
         mavenJava(MavenPublication) {
@@ -61,7 +61,7 @@ publishing {
                 name = 'Android File List'
                 packaging 'aar'
                 // optionally artifactId can be defined here
-                description = 'A simple filelist based RecyelerView.'
+                description = 'A simple filelist based RecyclerView.'
                 url = 'https://github.com/TherCN/FileList'
 
                 scm {
@@ -89,12 +89,12 @@ publishing {
                     def dependencyNode = dependenciesNode.appendNode('dependency')
                     dependencyNode.appendNode('groupId', 'androidx.recyclerview')
                     dependencyNode.appendNode('artifactId', 'recyclerview')
-                    dependencyNode.appendNode('version', 'LATEST')
+                    dependencyNode.appendNode('version', '1.3.2')
 
                     dependencyNode = dependenciesNode.appendNode('dependency')
                     dependencyNode.appendNode('groupId', 'androidx.annotation')
                     dependencyNode.appendNode('artifactId', 'annotation')
-                    dependencyNode.appendNode('version', 'LATEST')
+                    dependencyNode.appendNode('version', '1.9.1')
                 }
             }
         }
@@ -109,8 +109,8 @@ publishing {
             def snapshotsMavenUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
             if (enableMavenCentral) {
                 credentials {
-                    username = ossrhUsername
-                    password = ossrhPassword
+                    username = project.hasProperty("ossrhUsername") ? ossrhUsername : null
+                    password = project.hasProperty("ossrhPassword") ? ossrhPassword : null
                 }
                 url = version.endsWith('SNAPSHOT') ? snapshotsMavenUrl : releasesMavenUrl
             } else {
