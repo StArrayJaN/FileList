@@ -8,7 +8,6 @@ import android.widget.Toast;
 import androidx.activity.OnBackPressedCallback;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
-
 import starray.android.filelist.FileListAdapter;
 import starray.android.filelist.FileListView;
 
@@ -18,6 +17,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.main);
+
         fileListView = findViewById(R.id.fileListView);
         Permission.checkPermission(this);
         if (Permission.isPermissionGranted(this) )fileListView.init("/storage/emulated/0");

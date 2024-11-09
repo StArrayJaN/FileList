@@ -1,11 +1,9 @@
 package starray.android.filelist;
 
-import android.annotation.SuppressLint;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.graphics.BitmapFactory;
-import android.os.Environment;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -15,7 +13,6 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
@@ -35,19 +32,28 @@ import java.util.stream.Collectors;
 @SuppressWarnings("all")
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHolder> {
 
-	List<FileInfo> files;
-	Context context;
-	FileInfo currentDir;
-	FileItemClickListener fileItemClickListener;
+	private List<FileInfo> files;
+	private Context context;
+	private FileInfo currentDir;
+	private FileItemClickListener fileItemClickListener;
 
-	String pastePath = "";
-	String newFileName = "";
+	private String newFileName = "";
 
+	/**
+	 * 构造函数
+	 * @param context 上下文
+	 * @param files 文件信息列表
+	 */
 	public FileListAdapter(Context context, List<FileInfo> files) {
 		this.context = context;
 		setCurrentDir(files.get(0).getFile().getParent());
 	}
 
+	/** 从位置获取{@link FileInfo}实例
+	 *
+	 * @param position 位置
+	 * @return {@link FileInfo}实例
+	 */
 	public FileInfo getItem(int position) {
 		return files.get(position);
 	}
@@ -56,6 +62,10 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 		void onFileItemClick(File file);
 	}
 
+	/**
+	 * 设置文件点击监听器
+	 * @param fileItemClickListener 文件点击监听器
+	 */
 	public void setFileItemClickListener(FileItemClickListener fileItemClickListener) {
 		this.fileItemClickListener = fileItemClickListener;
 	}
@@ -73,7 +83,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
         if (selectedFile.getFile().isDirectory()) {
 			holder.fileIcon.setImageResource(R.drawable.folder);
 		} else {
-			switch (Extension.getFileType(selectedFile.getName())) {
+			switch (Extensions.getFileType(selectedFile.getName())) {
 				case IMAGE:
 					holder.fileIcon.setImageBitmap(BitmapFactory.decodeFile(selectedFile.getFile().getAbsolutePath()));
 					break;
@@ -151,7 +161,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 			menu.findItem(R.id.create_folder).setVisible(selectedFile.getFile().isDirectory());
 			popupMenu.setOnMenuItemClickListener(item -> {
 				try {
-					if (item.getItemId() == ResourceIDs.ID_DELETE) {
+					if (item.getItemId() == R.id.delete) {
 						if (selectedFile.getFile().isDirectory()) {
 							Files.walkFileTree(selectedFile.getFile().toPath(), new SimpleFileVisitor<Path>() {
 								@Override
@@ -169,11 +179,14 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 						} else {
 							selectedFile.getFile().delete();
 						}
-					} else if (item.getItemId() == ResourceIDs.ID_CREATE_FOLDER) {
+					} else if (item.getItemId() == R.id.create_folder) {
 						File newFolder = new File(selectedFile.getFile(), "New Folder");
-						newFolder.mkdir();
-					} else if (item.getItemId() == ResourceIDs.ID_CREATE_FILE) {
+						newFolder.mkdirs();
+					} else if (item.getItemId() == R.id.create_file) {
 						File newFile = new File(selectedFile.getFile(), "New File.txt");
+						if (!newFile.getParentFile().exists()) {
+							newFile.getParentFile().mkdirs();
+						}
 						newFile.createNewFile();
 					}
 					refresh();
@@ -187,6 +200,11 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
         });
     }
 
+	/**
+	 * 检查是否为无法访问的目录("/storage/emulated/0", "/storage/emulated", "/sdcard", "/storage", "/")
+	 *
+	 * @param file {@link File}实例
+	 */
 	public static boolean isRoot(File file) {
 		String[] rootDirs = {"/storage/emulated/0", "/storage/emulated", "/sdcard", "/storage", "/"};
 		for (String rootDir : rootDirs) {
@@ -195,10 +213,12 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 		return false;
 	}
 
+	/** 刷新当前目录 */
 	public void refresh(){
 		setCurrentDir(getCurrentDir().getAbsolutePath());
 	}
 
+	/** 获取新文件名 */
 	private void getNewName(String title) {
 		AlertDialog dialog = new AlertDialog.Builder(context).create();
 		dialog.setTitle(title);
@@ -209,6 +229,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 		});
 		dialog.show();
 	}
+
 
 	static File[] sortFileList(File[] files) {
 		Arrays.sort(files, (o1, o2) -> {
@@ -230,16 +251,28 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
         return files.size();
     }
 
+	/** 获取当前目录 */
 	public File getCurrentDir() {
 		Log.i("FileListAdapter", "getCurrentDir:" + currentDir);
 		return currentDir.getFile();
 	}
 
+	/**
+	 * 获取并排序文件列表
+	 * 顺序为:文件夹(.A-.z(名字开头为.的文件夹))，文件夹(A-z),文件(.A-.z(名字开头为.的文件))，文件(A-z)
+	 * @param path 文件夹路径
+	 * @return {@code File[]} 排序后的文件组
+	 */
 	static File[] getFiles(String path) {
 		File[] files = new File(path).listFiles();
 		return sortFileList(files);
 	}
 
+	/**
+	 * 设置当前目录
+	 *
+	 * @param path 文件夹路径
+	 */
 	public void setCurrentDir(String path) {
 		currentDir = FileInfo.formFile(new File(path));
 		Log.i("FileListAdapter", "setCurrentDir:" + currentDir);

@@ -2,12 +2,11 @@ package starray.android.filelist;
 
 import android.util.Log;
 
-import androidx.annotation.Nullable;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 
-public class Extension {
+public class Extensions {
+
     public static boolean isCPPLanguage(String filename) {
         return switch (getExtension(filename)) {
             case ".cc", ".cpp", ".cxx" -> true;
@@ -88,9 +87,15 @@ public class Extension {
         return getExtension(filename).equals("apk");
     }
 
+    /**
+     * 获取文件扩展名(.txt,.java,.cpp等)
+     *
+     * @param filename 文件名
+     * @return {@link String} 扩展名
+     */
     public static String getExtension(String filename) {
         String[] fileNames = filename.split("\\.");
-        Log.i(Extension.class.getName(),"input:" + filename + ",return:" + fileNames[fileNames.length - 1]);
+        Log.i(Extensions.class.getName(),"input:" + filename + ",return:" + fileNames[fileNames.length - 1]);
         return fileNames[fileNames.length - 1];
     }
 
@@ -98,46 +103,56 @@ public class Extension {
         return filename.endsWith(".exe") || filename.endsWith(".dll");
     }
 
-    public static Extension.FileType getFileType(String filename) {
+    /**
+     * 获取文件类型
+     *
+     * @param filename 文件名
+     * @return {@link FileType} 返回值描述
+     */
+    public static FileType getFileType(String filename) {
         if (isCLanguage(filename)) {
-            return Extension.FileType.C;
+            return FileType.C;
         }
         if (isCPPLanguage(filename)) {
-            return Extension.FileType.CPP;
+            return FileType.CPP;
         }
         if (isJavaLanguage(filename)) {
-            return Extension.FileType.JAVA;
+            return FileType.JAVA;
         }
         if (isTextFile(filename)) {
-            return Extension.FileType.TEXT;
+            return FileType.TEXT;
         }
         if (isImageFile(filename)) {
-            return Extension.FileType.IMAGE;
+            return FileType.IMAGE;
         }
         if (isCompressedFile(filename)) {
-            return Extension.FileType.COMPRESSED;
+            return FileType.COMPRESSED;
         }
         if (isApk(filename)) {
-            return Extension.FileType.APK;
+            return FileType.APK;
         }
         if (isCAndCPPHeader(filename)) {
-            return Extension.FileType.C_AND_CPP_HEADER;
+            return FileType.C_AND_CPP_HEADER;
         }
         if (isNTBinary(filename)) {
-            return Extension.FileType.NT_BINARY;
+            return FileType.NT_BINARY;
         }
         if (isELFBinary(filename)) {
-            return Extension.FileType.ELF_BINARY;
+            return FileType.ELF_BINARY;
         }
         if (isAudioFile(filename)) {
-            return Extension.FileType.AUDIO;
+            return FileType.AUDIO;
         }
         if (isVideoFile(filename)) {
-            return Extension.FileType.VIDEO;
+            return FileType.VIDEO;
         }
-        return Extension.FileType.UNKNOWN;
+        return FileType.UNKNOWN;
     }
-    enum FileType {
+
+    /**
+     * 文件类型枚举
+     */
+    protected enum FileType {
         TEXT, IMAGE, COMPRESSED, APK,
         C, CPP, JAVA, C_AND_CPP_HEADER,
         NT_BINARY, ELF_BINARY, VIDEO, AUDIO, UNKNOWN

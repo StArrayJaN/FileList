@@ -1,7 +1,6 @@
 package starray.android.filelist;
 
 import android.content.Context;
-import android.os.Environment;
 import android.util.AttributeSet;
 import android.util.Log;
 
@@ -18,8 +17,10 @@ import java.util.Objects;
 import java.util.stream.Collectors;
 
 public class FileListView extends RecyclerView {
-    FileListAdapter adapter;
-    boolean init = false;
+
+    private FileListAdapter adapter;
+    private boolean init = false;
+
     public FileListView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
     }
@@ -32,6 +33,10 @@ public class FileListView extends RecyclerView {
         super(context);
     }
 
+    /**
+     * 初始化文件列表
+     * @param path 文件夹路径
+     */
     public void init(String path){
         if (init) throw new IllegalStateException("Already initialized!");
         File[] files = Objects.requireNonNull(FileListAdapter.sortFileList(new File(path).listFiles()));
@@ -46,10 +51,13 @@ public class FileListView extends RecyclerView {
         Log.i(getClass().getSimpleName(), Objects.toString(init));
     }
 
+
+    /** 刷新文件列表 */
     public void refresh(){
         adapter.refresh();
     }
 
+    /** 获取文件列表适配器 */
     @Nullable
     @Override
     public FileListAdapter getAdapter() {

@@ -1,16 +1,30 @@
 package starray.android.filelist;
 
-import android.os.Environment;
-
 import androidx.annotation.NonNull;
 
 import java.io.File;
 
 public class FileInfo {
+
+    /**
+     * 文件名
+     */
     private final String name;
+    /**
+     * 文件绝对路径
+     */
     private final String path;
+    /**
+     * {@link File}文件实例
+     */
     private final File file;
 
+    /**
+     * 从文件获取{@link FileInfo}实例
+     *
+     * @param file {@link File}
+     * @return {@link FileInfo} 获取到的{@link FileInfo}实例
+     */
     public static FileInfo formFile(File file) {
         return new FileInfo(file.getName(), file.getAbsolutePath());
     }
@@ -21,14 +35,17 @@ public class FileInfo {
         this.file = new File(path);
     }
 
+    /** 获取文件名 */
     public String getName() {
         return name;
     }
 
+    /** 获取文件绝对路径 */
     public String getPath() {
         return path;
     }
 
+    /** 获取{@link File}文件实例 */
     public File getFile() {
         return file;
     }

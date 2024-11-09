@@ -1,14 +1,16 @@
 plugins {
     id 'com.android.library'
+    id "maven-publish"
+    id "signing"
 }
-
+String libraryVersion = '1.0.1'
 android {
     compileSdkVersion 34
     namespace "starray.android.filelist"
     defaultConfig {
         minSdkVersion 26
         versionCode 1
-        versionName "1.0"
+        versionName libraryVersion
     }
     buildTypes {
         release {
@@ -27,4 +29,96 @@ android {
 }
 dependencies {
     implementation "androidx.recyclerview:recyclerview:1.3.2"
+    implementation "androidx.annotation:annotation:1.9.1"
+}
+task sourcesJar(type: Jar) {
+    archiveClassifier = 'sources'
+    from android.sourceSets.main.java.srcDirs
+}
+task javadocJar(type: Jar) {
+    archiveClassifier = 'javadoc'
+    from android.sourceSets.main.java.srcDirs
+}
+artifacts {
+    archives javadocJar, sourcesJar
+}
+
+group = "io.github.starrayjan"
+archivesBaseName = "filelist"
+boolean enableMavenCentral = true
+publishing {
+    publications {
+        mavenJava(MavenPublication) {
+            groupId group//对应sonatype平台新建中的Group Id
+            artifactId archivesBaseName //项目唯一标识符，对应项目名称
+            version libraryVersion //发布为版本后缀是SNAPSHOT
+            artifact(javadocJar)//将javadoc文档工件打包进aar
+            artifact(sourcesJar)//将Java注释工件打包进aar
+
+            artifact buildDir.toString() + '/outputs/aar/' + archivesBaseName + '-release.aar'
+
+            pom {
+                name = 'Android File List'
+                packaging 'aar'
+                // optionally artifactId can be defined here
+                description = 'A simple filelist based RecyelerView.'
+                url = 'https://github.com/TherCN/FileList'
+
+                scm {
+                    connection = 'scm:git:https://github.com/TherCN/FileList'
+                    developerConnection = 'scm:git:https://github.com/TherCN'
+                    url = 'https://github.com/TherCN/FileList/'
+                }
+
+                licenses {
+                    license {
+                        name ='The GPL License, Version 2.0'
+                        url ='https://www.gnu.org/licenses/old-licenses/gpl-2.0.html'
+                    }
+                }
+
+                developers {
+                    developer {
+                        id = 'starray'
+                        name = 'StArray'
+                        email ='b1431736437@163.com'
+                    }
+                }
+                pom.withXml {
+                    def dependenciesNode = asNode().appendNode('dependencies')
+                    def dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', 'androidx.recyclerview')
+                    dependencyNode.appendNode('artifactId', 'recyclerview')
+                    dependencyNode.appendNode('version', 'LATEST')
+
+                    dependencyNode = dependenciesNode.appendNode('dependency')
+                    dependencyNode.appendNode('groupId', 'androidx.annotation')
+                    dependencyNode.appendNode('artifactId', 'annotation')
+                    dependencyNode.appendNode('version', 'LATEST')
+                }
+            }
+        }
+    }
+    repositories {
+        maven {
+
+            // change URLs to point to your repos, e.g. http://my.org/repo
+            def releasesRepoUrl = layout.buildDirectory.dir('repos/releases')
+            def snapshotsRepoUrl = layout.buildDirectory.dir('repos/snapshots')
+            def releasesMavenUrl = "https://s01.oss.sonatype.org/service/local/staging/deploy/maven2/"
+            def snapshotsMavenUrl = "https://s01.oss.sonatype.org/content/repositories/snapshots/"
+            if (enableMavenCentral) {
+                credentials {
+                    username = ossrhUsername
+                    password = ossrhPassword
+                }
+                url = version.endsWith('SNAPSHOT') ? snapshotsMavenUrl : releasesMavenUrl
+            } else {
+                url = version.endsWith('SNAPSHOT') ? snapshotsRepoUrl : releasesRepoUrl
+            }
+        }
+    }
+}
+signing {
+    sign publishing.publications.mavenJava
 }
