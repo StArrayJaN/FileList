@@ -1,6 +1,9 @@
 # Android File List
 a simple filelist based RecyclerView  
-[Maven Central](https://repo.maven.apache.org/maven2/io/github/starrayjan/filelist/)
+[Maven Central](https://repo.maven.apache.org/maven2/io/github/starrayjan/filelist/)  
+
+sample image
+![image](image/sample.png)
 ### Getting Started
 #### in `build.gradle`
 ```groovy
