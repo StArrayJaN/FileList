@@ -1,9 +1,12 @@
 package starray.android.filelist;
 
+import android.app.Activity;
 import android.app.AlertDialog;
 import android.content.Context;
 import android.content.pm.PackageInfo;
+import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.Menu;
@@ -34,6 +37,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 
 	private List<FileInfo> files;
 	private Context context;
+	private Activity activityContext;
 	private FileInfo currentDir;
 	private FileItemClickListener fileItemClickListener;
 
@@ -46,6 +50,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 	 */
 	public FileListAdapter(Context context, List<FileInfo> files) {
 		this.context = context;
+		if (context instanceof Activity) {
+			this.activityContext = (Activity) context;
+		}
 		setCurrentDir(files.get(0).getFile().getParent());
 	}
 
@@ -85,7 +92,15 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 		} else {
 			switch (Extensions.getFileType(selectedFile.getName())) {
 				case IMAGE:
-					holder.fileIcon.setImageBitmap(BitmapFactory.decodeFile(selectedFile.getFile().getAbsolutePath()));
+					if (activityContext == null) {
+						Bitmap bitmap = BitmapFactory.decodeFile(selectedFile.getFile().getAbsolutePath());
+						 holder.fileIcon.setImageBitmap(bitmap);
+					} else {
+						new Thread(() -> {
+							Bitmap bitmap = BitmapFactory.decodeFile(selectedFile.getFile().getAbsolutePath());
+							activityContext.runOnUiThread(() -> holder.fileIcon.setImageBitmap(bitmap));
+						}).start();
+					}
 					break;
 				case TEXT:
 					holder.fileIcon.setImageResource(R.drawable.file_type_txt);
@@ -97,10 +112,21 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 					holder.fileIcon.setImageResource(R.drawable.file_type_java);
 					break;
 				case APK:
-					PackageInfo pi = context.getPackageManager().getPackageArchiveInfo(selectedFile.getFile().getAbsolutePath(), 0);
-					pi.applicationInfo.sourceDir = selectedFile.getFile().getAbsolutePath();
-					pi.applicationInfo.publicSourceDir = selectedFile.getFile().getAbsolutePath();
-					holder.fileIcon.setImageDrawable(pi.applicationInfo.loadIcon(context.getPackageManager()));
+					if (activityContext == null) {
+						PackageInfo pi = context.getPackageManager().getPackageArchiveInfo(selectedFile.getFile().getAbsolutePath(), 0);
+						pi.applicationInfo.sourceDir = selectedFile.getFile().getAbsolutePath();
+						pi.applicationInfo.publicSourceDir = selectedFile.getFile().getAbsolutePath();
+						Drawable drawable = pi.applicationInfo.loadIcon(context.getPackageManager());
+						holder.fileIcon.setImageDrawable(drawable);
+					} else {
+						new Thread(() -> {
+							PackageInfo pi = context.getPackageManager().getPackageArchiveInfo(selectedFile.getFile().getAbsolutePath(), 0);
+							pi.applicationInfo.sourceDir = selectedFile.getFile().getAbsolutePath();
+							pi.applicationInfo.publicSourceDir = selectedFile.getFile().getAbsolutePath();
+							Drawable drawable = pi.applicationInfo.loadIcon(context.getPackageManager());
+							activityContext.runOnUiThread(() -> holder.fileIcon.setImageDrawable(drawable));
+						}).start();
+					}
 					break;
 				case C:
 					holder.fileIcon.setImageResource(R.drawable.file_type_c);
@@ -203,7 +229,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 	/**
 	 * 检查是否为无法访问的目录("/storage/emulated/0", "/storage/emulated", "/sdcard", "/storage", "/")
 	 *
-	 * @param file {@link File}实例
+	 * @param file {@link File}
 	 */
 	public static boolean isRoot(File file) {
 		String[] rootDirs = {"/storage/emulated/0", "/storage/emulated", "/sdcard", "/storage", "/"};
