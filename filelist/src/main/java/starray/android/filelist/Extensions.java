@@ -107,7 +107,7 @@ public class Extensions {
      * 获取文件类型
      *
      * @param filename 文件名
-     * @return {@link FileType} 返回值描述
+     * @return {@link FileType} 文件类型
      */
     public static FileType getFileType(String filename) {
         if (isCLanguage(filename)) {
@@ -150,7 +150,7 @@ public class Extensions {
     }
 
     /**
-     * 文件类型枚举
+     * 文件类型
      */
     protected enum FileType {
         TEXT, IMAGE, COMPRESSED, APK,

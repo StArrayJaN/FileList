@@ -6,6 +6,7 @@ import android.content.Context;
 import android.content.pm.PackageInfo;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Color;
 import android.graphics.drawable.Drawable;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -17,56 +18,63 @@ import android.widget.ImageView;
 import android.widget.PopupMenu;
 import android.widget.TextView;
 
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.RecyclerView;
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.FileVisitResult;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.SimpleFileVisitor;
-import java.nio.file.attribute.BasicFileAttributes;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
+import java.util.function.Consumer;
 import java.util.stream.Collectors;
 
 @SuppressWarnings("all")
 public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHolder> {
 
-	private List<FileInfo> files;
+	private List<FileItemInfo> files = new ArrayList<>();
 	private Context context;
 	private Activity activityContext;
-	private FileInfo currentDir;
+	private FileItemInfo currentDir;
+	private String lastDir;
 	private FileItemClickListener fileItemClickListener;
+	private RecyclerView parentView;
 
+	private List<FileItemInfo> selectedFiles = new ArrayList<>();
 	private String newFileName = "";
+	private boolean isDestroyed = false;
+	private boolean isMultiSelectMode = false;
 
 	/**
 	 * 构造函数
 	 * @param context 上下文
 	 * @param files 文件信息列表
 	 */
-	public FileListAdapter(Context context, List<FileInfo> files) {
+	public FileListAdapter(Context context, List<FileItemInfo> files) {
 		this.context = context;
 		if (context instanceof Activity) {
 			this.activityContext = (Activity) context;
 		}
-		setCurrentDir(files.get(0).getFile().getParent());
+		setCurrentDir(files.get(0).getParent());
+
 	}
 
-	/** 从位置获取{@link FileInfo}实例
+	protected void setParentView(RecyclerView view) {
+		parentView = view;
+	}
+
+	/** 从位置获取{@link FileItemInfo}实例
 	 *
 	 * @param position 位置
-	 * @return {@link FileInfo}实例
+	 * @return {@link FileItemInfo}实例
 	 */
-	public FileInfo getItem(int position) {
+	public FileItemInfo getItem(int position) {
 		return files.get(position);
 	}
 
 	public interface FileItemClickListener {
-		void onFileItemClick(File file);
+		void onFileItemClick(FileItemInfo file);
 	}
 
 	/**
@@ -85,16 +93,16 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
-        final FileInfo selectedFile = files.get(position);
+		final FileItemInfo selectedFile = files.get(position);
 		holder.fileName.setText(selectedFile.getName());
-        if (selectedFile.getFile().isDirectory()) {
+		if (selectedFile.getFile().isDirectory()) {
 			holder.fileIcon.setImageResource(R.drawable.folder);
 		} else {
 			switch (Extensions.getFileType(selectedFile.getName())) {
 				case IMAGE:
 					if (activityContext == null) {
 						Bitmap bitmap = BitmapFactory.decodeFile(selectedFile.getFile().getAbsolutePath());
-						 holder.fileIcon.setImageBitmap(bitmap);
+						holder.fileIcon.setImageBitmap(bitmap);
 					} else {
 						new Thread(() -> {
 							Bitmap bitmap = BitmapFactory.decodeFile(selectedFile.getFile().getAbsolutePath());
@@ -132,7 +140,7 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 					holder.fileIcon.setImageResource(R.drawable.file_type_c);
 					break;
 				case CPP:
-		            holder.fileIcon.setImageResource(R.drawable.file_type_cpp);
+					holder.fileIcon.setImageResource(R.drawable.file_type_cpp);
 					break;
 				default:
 					holder.fileIcon.setImageResource(R.drawable.file_type_unknown);
@@ -140,9 +148,9 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 		}
 
 		long lastModifiedTime = selectedFile.getFile().lastModified();
-        Date lastModifiedDate = new Date(lastModifiedTime);
-        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
-        String formattedDate = dateFormat.format(lastModifiedDate);
+		Date lastModifiedDate = new Date(lastModifiedTime);
+		SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
+		String formattedDate = dateFormat.format(lastModifiedDate);
 
 		String permission = "";
 		if (selectedFile.getFile().canRead()) {
@@ -164,68 +172,82 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 		holder.fileTime.setText(formattedDate + " " + permission);
 		holder.itemView.setOnClickListener(v -> {
 			if (fileItemClickListener != null) {
-				fileItemClickListener.onFileItemClick(selectedFile.getFile());
+				fileItemClickListener.onFileItemClick(selectedFile);
 			}
-            if (selectedFile.getFile().getParentFile() == null) {
-                return;
-            }
-            if (selectedFile.getFile().isDirectory()) {
-                currentDir = selectedFile;
-                List<File> newFiles = new ArrayList<>();
-                newFiles.add(selectedFile.getFile().getParentFile());
-				Log.i("FileListAdapter", "add:" + selectedFile.getFile().getAbsolutePath());
-                File[] newDir = getFiles(selectedFile.getFile().getAbsolutePath());
-				newFiles.addAll(Arrays.asList(newDir));
-                setCurrentDir(currentDir.getFile().getAbsolutePath());
-            }
-        });
-		holder.itemView.setOnLongClickListener(v -> {
-			PopupMenu popupMenu = new PopupMenu(context, v);
-			popupMenu.inflate(R.menu.file_operation_menu);
-			Menu menu = popupMenu.getMenu();
-			menu.findItem(R.id.create_file).setVisible(selectedFile.getFile().isDirectory());
-			menu.findItem(R.id.create_folder).setVisible(selectedFile.getFile().isDirectory());
-			popupMenu.setOnMenuItemClickListener(item -> {
-				try {
-					if (item.getItemId() == R.id.delete) {
-						if (selectedFile.getFile().isDirectory()) {
-							Files.walkFileTree(selectedFile.getFile().toPath(), new SimpleFileVisitor<Path>() {
-								@Override
-								public FileVisitResult visitFile(Path file, BasicFileAttributes attrs) throws IOException {
-									file.toFile().delete();
-									return super.visitFile(file, attrs);
-								}
+			if (selectedFile.getFile().getParentFile() == null) {
+				return;
+			}
 
-								@Override
-								public FileVisitResult postVisitDirectory(Path dir, IOException exc) throws IOException {
-									dir.toFile().delete();
-									return super.postVisitDirectory(dir, exc);
-								}
-							});
-						} else {
-							selectedFile.getFile().delete();
-						}
-					} else if (item.getItemId() == R.id.create_folder) {
-						File newFolder = new File(selectedFile.getFile(), "New Folder");
-						newFolder.mkdirs();
-					} else if (item.getItemId() == R.id.create_file) {
-						File newFile = new File(selectedFile.getFile(), "New File.txt");
-						if (!newFile.getParentFile().exists()) {
-							newFile.getParentFile().mkdirs();
-						}
-						newFile.createNewFile();
-					}
-					refresh();
-				} catch (IOException e) {
+			if (isMultiSelectMode) {
+				if (selectedFile.isSelected() || !selectedFile.getFile().exists()) {
+					selectedFile.setSelected(false);
+					holder.itemView.setBackgroundColor(Color.TRANSPARENT);
+					selectedFiles.remove(selectedFile);
 
+				} else {
+					selectedFile.setSelected(true);
+					holder.itemView.setBackgroundColor(Color.BLUE);
+					selectedFiles.add(selectedFile);
 				}
-				return true;
+				return;
+			}
+			if (selectedFile.getFile().isDirectory()) {
+				setCurrentDir(selectedFile);
+			}
+		});
+
+		if (!holder.fileName.getText().equals("..")) {
+			holder.itemView.setOnLongClickListener(new View.OnLongClickListener() {
+				@Override
+				public boolean onLongClick(View view) {
+					PopupMenu popupMenu = new PopupMenu(context, view);
+					popupMenu.inflate(R.menu.file_operation_menu);
+					Menu menu = popupMenu.getMenu();
+					menu.findItem(R.id.create_file).setVisible(selectedFile.getFile().isDirectory());
+					menu.findItem(R.id.create_folder).setVisible(selectedFile.getFile().isDirectory());
+					popupMenu.setOnMenuItemClickListener(item -> {
+						try {
+							if (item.getItemId() == R.id.delete) {
+								FileUtils.delete(selectedFile.getFile());
+								if (!selectedFiles.isEmpty())
+									FileUtils.delete(selectedFiles.stream().map(FileItemInfo::getFile).collect(Collectors.toList()));
+							} else if (item.getItemId() == R.id.create_folder) {
+								File newFolder = new File(selectedFile.getFile(), "New Folder");
+								newFolder.mkdirs();
+							} else if (item.getItemId() == R.id.create_file) {
+								File newFile = new File(selectedFile.getFile(), "New File.txt");
+								if (!newFile.getParentFile().exists()) {
+									newFile.getParentFile().mkdirs();
+								}
+								newFile.createNewFile();
+							}
+							refresh();
+						} catch (IOException ignored) {
+						}
+						return false;
+					});
+					popupMenu.show();
+					return false;
+				}
 			});
-			popupMenu.show();
-            return true;
-        });
+		}
+		/** if block ↑ is false but execute????????
+		 * if(!holder.fileName.getText().equals(".."))
+		 * ?????????????????????????
+		 */
+		if (holder.fileName.getText().equals("..")) {
+			holder.itemView.setOnLongClickListener(null);
+		}
     }
 
+	private void cleanNotExistFiles() {
+		for (FileItemInfo fileItemInfo : selectedFiles) {
+			if (!fileItemInfo.getFile().exists()) {
+				selectedFiles.remove(fileItemInfo);
+			}
+		}
+		if (selectedFiles.isEmpty()) isMultiSelectMode = false;
+	}
 	/**
 	 * 检查是否为无法访问的目录("/storage/emulated/0", "/storage/emulated", "/sdcard", "/storage", "/")
 	 *
@@ -241,7 +263,18 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 
 	/** 刷新当前目录 */
 	public void refresh(){
-		setCurrentDir(getCurrentDir().getAbsolutePath());
+		setCurrentDir(FileItemInfo.formFile(getCurrentDir()));
+	}
+
+	public void destory() {
+		if (isDestroyed) {
+			throw new IllegalStateException("FileListAdapter has been destoryed");
+		} else {
+			isDestroyed = true;
+		}
+		files.clear();
+		selectedFiles.clear();
+		notifyDataSetChanged();
 	}
 
 	/** 获取新文件名 */
@@ -255,7 +288,6 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 		});
 		dialog.show();
 	}
-
 
 	static File[] sortFileList(File[] files) {
 		Arrays.sort(files, (o1, o2) -> {
@@ -299,24 +331,41 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
 	 *
 	 * @param path 文件夹路径
 	 */
-	public void setCurrentDir(String path) {
-		currentDir = FileInfo.formFile(new File(path));
-		Log.i("FileListAdapter", "setCurrentDir:" + currentDir);
-		File[] files = getFiles(path);
-		this.files = Arrays.asList(files).stream().map(FileInfo::formFile).collect((Collectors.toList()));
-		if (!isRoot(new File(path))) {
-			Log.i("FileListAdapter", "add:" + new File(path).getParentFile().getAbsolutePath());
-			File parent = new File(path).getParentFile();
-			this.files.add(0,new FileInfo("..",parent.getAbsolutePath()));
+	public void setCurrentDir(FileItemInfo fileItemInfo) {
+		currentDir = fileItemInfo;
+		currentDir.setAllowLongPress(false);
+		this.files.clear();
+		File[] files = getFiles(fileItemInfo.getPath());
+		if (!isRoot(new File(fileItemInfo.getPath()))) {
+			Log.i("FileListAdapter", "add:" + new File(fileItemInfo.getPath()).getParentFile().getAbsolutePath());
+			File parent = new File(fileItemInfo.getPath()).getParentFile();
+			this.files.add(new FileItemInfo("..",parent.getAbsolutePath(), false));
 		}
+		var fileList = Arrays
+				.asList(files)
+				.stream()
+				.map(FileItemInfo::formFile)
+				.collect((Collectors.toList()));
+		this.files.addAll(fileList);
 		notifyDataSetChanged();
 	}
 
-	static class ViewHolder extends RecyclerView.ViewHolder {
+	public void onItemMove(int fromPosition, int toPosition) {
+		//Collections.swap(fileList, fromPosition, toPosition);
+		isMultiSelectMode = true;
+	}
+
+	interface ItemTouchHelperViewHolder {
+		void onItemSelected(int position);
+		void onItemScroll(int position);
+	}
+
+	class ViewHolder extends RecyclerView.ViewHolder implements ItemTouchHelperViewHolder {
 
         TextView fileName;
 		ImageView fileIcon;
 		TextView fileTime;
+
 
         public ViewHolder(View itemView) {
             super(itemView);
@@ -324,6 +373,25 @@ public class FileListAdapter extends RecyclerView.Adapter<FileListAdapter.ViewHo
             fileIcon = itemView.findViewById(R.id.file_list_image);
 			fileTime = itemView.findViewById(R.id.file_list_time);
         }
-    }
+
+		@Override
+		public void onItemSelected(int position) {
+			itemView.setBackgroundColor(Color.BLUE);
+			itemView.setBackgroundColor(Color.BLUE);
+			if (!isMultiSelectMode) {
+				isMultiSelectMode = true;
+			}
+			files.get(position).setSelected(true);
+		}
+
+		@Override
+		public void onItemScroll(int position) {
+			itemView.setBackgroundColor(Color.BLUE);
+			if (!isMultiSelectMode) {
+				isMultiSelectMode = true;
+			}
+			files.get(position).setSelected(true);
+		}
+	}
 
 }

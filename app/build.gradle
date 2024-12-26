@@ -4,7 +4,7 @@ plugins {
 
 android {
     namespace 'starray.android.filelistdemo'
-    compileSdk 35
+    compileSdk 34
 
     defaultConfig {
         applicationId "starray.android.filelist"
@@ -36,6 +36,6 @@ dependencies {
     testImplementation libs.junit
     androidTestImplementation libs.ext.junit
     androidTestImplementation libs.espresso.core
-    implementation("io.github.starrayjan:filelist:1.0.1")
-    //implementation project(":filelist")
+    //implementation("io.github.starrayjan:filelist:1.0.1")
+    implementation project(":filelist")
 }

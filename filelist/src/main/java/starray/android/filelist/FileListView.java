@@ -6,6 +6,7 @@ import android.util.Log;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.recyclerview.widget.ItemTouchHelper;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -20,9 +21,13 @@ public class FileListView extends RecyclerView {
 
     private FileListAdapter adapter;
     private boolean init = false;
+    ItemTouchHelper.Callback callback;
+    ItemTouchHelper itemTouchHelper;
+
 
     public FileListView(@NonNull Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
+
     }
 
     public FileListView(@NonNull Context context, @Nullable AttributeSet attrs) {
@@ -41,16 +46,20 @@ public class FileListView extends RecyclerView {
         if (init) throw new IllegalStateException("Already initialized!");
         File[] files = Objects.requireNonNull(FileListAdapter.sortFileList(new File(path).listFiles()));
         List<File> fileList = new ArrayList<>(Arrays.asList(files));
-        List<FileInfo> fileInfoList = fileList.stream()
-                .map(FileInfo::formFile)
+        List<FileItemInfo> fileInfoList = fileList.stream()
+                .map(FileItemInfo::formFile)
                 .collect(Collectors.toList());
         adapter = new FileListAdapter(this.getContext(),fileInfoList);
         setAdapter(adapter);
-        setLayoutManager(new LinearLayoutManager(this.getContext()));
+        LinearLayoutManager layoutManager = new LinearLayoutManager(this.getContext());
+        layoutManager.setOrientation(LinearLayoutManager.VERTICAL);
+        setLayoutManager(layoutManager);
+        callback = new ItemTouchHelperCallback(adapter);
+        itemTouchHelper = new ItemTouchHelper(callback);
+        itemTouchHelper.attachToRecyclerView(this);
         init = true;
         Log.i(getClass().getSimpleName(), Objects.toString(init));
     }
-
 
     /** 刷新文件列表 */
     public void refresh(){

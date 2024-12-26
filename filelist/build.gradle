@@ -3,7 +3,7 @@ plugins {
     id "maven-publish"
     id "signing"
 }
-String libraryVersion = '1.0.1'
+String libraryVersion = '1.0.2'
 android {
     compileSdkVersion 34
     namespace "starray.android.filelist"
@@ -45,7 +45,7 @@ artifacts {
 
 group = "io.github.starrayjan"
 archivesBaseName = "filelist"
-boolean enableMavenCentral = false
+boolean enableMavenCentral = true
 publishing {
     publications {
         mavenJava(MavenPublication) {

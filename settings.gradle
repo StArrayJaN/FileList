@@ -19,6 +19,6 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "FIleList"
+rootProject.name = "FileList"
 include ':app'
 include ':filelist'
